@@ -33,3 +33,10 @@ export type DashboardViewer = {
 	isAuthenticated: boolean;
 	hasMembership: boolean;
 }
+
+
+export const accessRequestStatuses = ["submitted", "approved", "rejected",] as const;
+
+export type CompanyAccessRequestStatus = (typeof accessRequestStatuses)[number];
+
+export type CompanyAccessRequest ={ companyName: string; products: Product[]; status: CompanyAccessRequestStatus; };

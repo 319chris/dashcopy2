@@ -4,6 +4,7 @@ import { ACCESS_HOME } from "@/lib/dashboard/routes";
 import { getDashboardViewer } from "@/lib/dashboard/service";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions/auth";
+import { getCompanyAccessRequest } from "@/lib/dashboard/application";
 
 export default async function SetupPage() {
   const currentPath = "/setup";
@@ -22,6 +23,61 @@ export default async function SetupPage() {
 
   if(ACCESS_HOME[accessState] !== currentPath){
     redirect(ACCESS_HOME[accessState]);
+  }
+
+  if(!user){
+    redirect("/sign-in");
+  }
+
+  if(!viewer.hasMembership){
+    const request = await getCompanyAccessRequest(supabase,user.id);
+
+    if(!request){
+      return (
+        <main style={{ padding: 24 }}>
+          <h1>Request access</h1>
+          <p>You have not submitted a company access request yet.</p>
+
+          <form action={signOut}>
+            <button type="submit">Sign out</button>
+          </form>
+        </main>
+      );
+    }
+
+    if (request.status === "submitted") {
+      return (
+        <main style={{ padding: 24 }}>
+          <h1>Application submitted</h1>
+          <p>Your company access request is waiting for review.</p>
+          <p>Company: {request.companyName}</p>
+          <p>Products: {request.products.join(", ")}</p>
+
+          <form action={signOut}>
+            <button type="submit">Sign out</button>
+          </form>
+        </main>
+      );
+    }
+
+    if (request.status === "rejected") {
+      return (
+        <main style={{ padding: 24 }}>
+          <h1>Application not approved</h1>
+          <p>Please contact our team for more information.</p>
+
+          <form action={signOut}>
+            <button type="submit">Sign out</button>
+          </form>
+        </main>
+      );
+    }
+    if (request.status === "approved") {
+    throw new Error(
+      "Approved access request has no company membership",
+    );
+  }
+    throw new Error("Unhandled access request status");
   }
 
   return (

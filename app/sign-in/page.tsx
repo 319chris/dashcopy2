@@ -1,3 +1,5 @@
+//这是 login 页面，也是一切发生的源头，当前用户输入账号密码，点击登入后，会进行第一次从浏览器和 supabase 进行直接交互
+
 "use client"
 
 import { useState } from "react";
@@ -30,7 +32,7 @@ export default function SignInPage(){
     }finally{
       setSubmitting(false);
     }
-
+  //这是当账号被验证后，触发客户端导航到 dashboard
     router.push("/dashboard");
     router.refresh();
     }

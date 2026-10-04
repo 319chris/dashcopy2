@@ -1,5 +1,6 @@
-import "server-only";
+//这个文件主要是进行真实数据拼装
 
+import "server-only";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type {
   DashboardOnboardingStatus,
@@ -8,7 +9,9 @@ import type {
 } from "./types";
 import {isCompanyRole, isOnboardingStatus, isPortalStatus, isProductList, } from "./validation";
 
-//等待返回型的 function，目的是获得这个用户 id 下，是否有是任何公司下的成员
+
+
+//等待返回型的 function，目的是获得这个用户 id 下，进入 company——membership 的表，筛选出 company_id和 role 两个字段返回
 export async function getCompanyMembership(supabase: SupabaseClient, userId: string){
 	const{data, error} = await supabase
 		.from("company_members")
@@ -22,7 +25,7 @@ export async function getCompanyMembership(supabase: SupabaseClient, userId: str
 
 	return data;
 }
-//等待返回型的 function，目的是获得当前在这个公司 id 下的 onboarding 情况是什么
+//等待返回型的 function，目的是获得当前在这个公司 id 下，进入 company——onboarding 表里面，筛选出 onboarding status 和 products 返回
 export async function getOnboardingState(supabase: SupabaseClient, companyId: string){
 	const{data: onboarding, error: onboardingError} = await supabase
 		.from("company_onboarding")
@@ -37,7 +40,7 @@ export async function getOnboardingState(supabase: SupabaseClient, companyId: st
     return onboarding;
 }
 
-//等待返回型的function，目的是获得在这个companyid 下，这个 company 的基础信息
+//等待返回型的function，目的是获得在这个公司id 下，进入 company 这个表，返回 id，name，slug，portal status
 export async function getCompany(supabase:SupabaseClient, companyId: string){
   const{data, error} = await supabase
     .from("companies")

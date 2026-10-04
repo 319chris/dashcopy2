@@ -12,13 +12,12 @@ export default async function DashboardPage(){
 
   const currentPath = "/dashboard";
   const supabase = await createClient();
-
   const {data: {user}, error: userError,} = await supabase.auth.getUser();
 
   if(userError){
     throw userError;
   }
-
+//在这里进行第一次由远端 server 和 supabase 进行的交互，查看是否遵循我们定义的 contract
   const viewer = await getDashboardViewer(supabase, user);
   const accessState = getAccessState(viewer);
   const company = viewer.company;
@@ -26,7 +25,7 @@ export default async function DashboardPage(){
     redirect("/setup");
   }
 
-
+//进行针对返回情况的一个路由，不同的情况路由到不同的地方
   if(ACCESS_HOME[accessState] !== currentPath ){
     redirect(ACCESS_HOME[accessState]);
   }
