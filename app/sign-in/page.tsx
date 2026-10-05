@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SignInPage(){
   const [email, setEmail] = useState("");
@@ -68,6 +69,10 @@ export default function SignInPage(){
           {submitting ? "signing in.." : "Sign in"}
          
         </button>
+        <p>
+            Need an account?
+            <Link href="/sign-up">Create account</Link>
+        </p>
 
         {errorMessage ? (
             <p style={{ color: "crimson", margin: 0 }}>{errorMessage}</p>

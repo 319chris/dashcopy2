@@ -5,6 +5,7 @@ import { getDashboardViewer } from "@/lib/dashboard/service";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions/auth";
 import { getCompanyAccessRequest } from "@/lib/dashboard/application";
+import ApplicationForm from "./application-form";
 
 export default async function SetupPage() {
   const currentPath = "/setup";
@@ -29,21 +30,24 @@ export default async function SetupPage() {
     redirect("/sign-in");
   }
 
-  if(!viewer.hasMembership){
-    const request = await getCompanyAccessRequest(supabase,user.id);
+  if (!viewer.hasMembership) {
+    const request = await getCompanyAccessRequest(supabase, user.id);
 
-    if(!request){
-      return (
-        <main style={{ padding: 24 }}>
-          <h1>Request access</h1>
-          <p>You have not submitted a company access request yet.</p>
+    if (!request) {
+    return (
+      <main style={{ padding: 24 }}>
+        <h1>Request access</h1>
+        <p>Submit your company and product request for review.</p>
 
-          <form action={signOut}>
-            <button type="submit">Sign out</button>
-          </form>
-        </main>
-      );
-    }
+        {/* 只有当前用户没有申请记录时，才显示申请表。 */}
+        <ApplicationForm />
+
+        <form action={signOut}>
+          <button type="submit">Sign out</button>
+        </form>
+      </main>
+    );
+  }
 
     if (request.status === "submitted") {
       return (
