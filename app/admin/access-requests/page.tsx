@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { isPlatformAdmin } from "@/lib/platform/admin";
+import {
+  approveCompanyAccessRequest,
+  rejectCompanyAccessRequest,
+} from "@/app/actions/admin";
 
 
 
@@ -57,6 +61,24 @@ export default async function AdminAccessRequestsPage(){
                 <p>Products: {request.products.join(", ")}</p>
                 <p>Status: {request.status}</p>
                 <p>Submitted: {request.created_at}</p>
+
+                <form action={approveCompanyAccessRequest}>
+                  <input
+                    type="hidden"
+                    name="requestId"
+                    value={request.id}
+                  />
+                  <button type="submit">Approve</button>
+                </form>
+
+                <form action={rejectCompanyAccessRequest}>
+                  <input
+                    type="hidden"
+                    name="requestId"
+                    value={request.id}
+                  />
+                  <button type="submit">Reject</button>
+                </form>
               </li>
             ))}
           </ul>
