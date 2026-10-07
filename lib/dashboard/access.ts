@@ -1,9 +1,11 @@
 //这里是列出一些反馈的情况，对一个身份信息的情况进行分类反馈，这个身份信息表里面缺少某些东西对应着某些特定的情况
 
 
-import type {DashboardViewer} from "@/lib/dashboard/types"
+import type {DashboardViewer, Product} from "@/lib/dashboard/types"
 
 export type DashboardAccessState = | "signed_out" | "unmapped" | "setup_pending" | "ready";
+
+export type DashboardProductAccessState = | DashboardAccessState | "product_unavailable";
 
 export function getAccessState(viewer : DashboardViewer): DashboardAccessState {
 
@@ -38,3 +40,17 @@ export function getAccessState(viewer : DashboardViewer): DashboardAccessState {
 
     return "ready";
   }
+
+export function getProductAccessState(viewer: DashboardViewer, products: Product):DashboardProductAccessState{
+  const accessState = getAccessState(viewer);
+  if(accessState !== "ready"){
+    return accessState;
+  }
+
+  if(!viewer.company?.products.includes(products)){
+    return "product_unavailable";
+  }
+
+  return "ready";
+
+}

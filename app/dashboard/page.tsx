@@ -7,8 +7,7 @@ import { signOut } from "@/app/actions/auth";
 
 
 
-export default async function DashboardPage(){
-
+export default async function DashboardPage({searchParams,}: PageProps<"/dashboard">) {
 
   const currentPath = "/dashboard";
   const supabase = await createClient();
@@ -29,9 +28,19 @@ export default async function DashboardPage(){
   if(ACCESS_HOME[accessState] !== currentPath ){
     redirect(ACCESS_HOME[accessState]);
   }
+
+  const { notice } = await searchParams;
+  const hasProductUnavailableNotice = notice === "product-unavailable";
+
   return (
     <main style={{ padding: 24 }}>
       <h1>{company.name} Dashboard</h1>
+
+      {hasProductUnavailableNotice ? (
+        <p role="status">
+          This product is not enabled for your company.
+        </p>
+      ) : null}
 
       <p>Company slug: {company.slug}</p>
       <p>Portal status: {company.portalStatus}</p>
